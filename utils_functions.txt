@@ -1,0 +1,10 @@
+------------ Sleep Function Delay -----------
+
+Different machines perform the sleep function with different accuracy.
+You can check your machine by running the script in my repo.
+This can help make sure other stuff running on the computer doesn’t
+interfere with Philosopher’s timings.
+
+- ft_usleep (use usleep inside)
+- get_current_time
+Gets the current time in milliseconds

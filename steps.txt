@@ -1,0 +1,84 @@
+1. Checking valid input
+
+First thing to do, before initializing is to check the
+program input.
+- The prog. will receive 4/5 arguments => Managing if we receive more
+or less than 4/5 args.
+
+Let's analyze the input : 
+- 5 — The number of philosophers
+- 800 — The time a philosopher will die if he doesn’t eat
+- 200 — The time it takes a philosopher to eat
+- 200 — The time it takes a philosopher to sleep
+- 7 — Number of times all the philosophers need to eat before terminating the program **
+
+=> We need to check : 
+- that the input contain only nb
+- nb should be bigger than 0 (all) except the nb of meals each philo need to eat.
+- Limit to 200 philos max ! (check the correction)
+
+2. Structures
+
+Each philo needs to be a thread & all the data needs to pass
+to the routine functions ! + RECODER USLEEP !!
+
+He created 2 structures : 
+- The prog. struct. which holds all of the philos (in an array),
+3 mutex & one dead_flag.
+- The philo structure where we have all of the general data,
+3 mutex pointers that point to the mutex in the 1st struct.,
+2 mutex pointers for the forks & on dead pointer which points
+to the dead flag in the prog. struct.
+
+3. Initializaton : 
+Memory on the stack =>
+initializing a philo structure array, a mutex array for the forks 
+and the program structure all in the main. From there I initialize 
+the program variables, initialize all the mutexes for the mutex 
+fork array, and lastly the philosophers — input variables and point 
+the pointers to all the mutexes and the dead_flag.
+
+4. Thread creation, Philo routine & monitor.
+Now we need to create the threads and join them. We will create 
+as many threads as philosophers we have, each philo needs to be a 
+thread and we will create an extra thread (I called it observer) 
+which will monitor everything. Each philo thread will run the philo 
+routine function and the observer will run the monitor function.
+
+---------- Philo routine ---------
+The routine will be the function executed over and over by the philos,
+Basically ,I created a loop that will break as soon as the dead flag is 1, 
+in other words as soon as a philo is dead.
+
+In our loop they will eat, sleep & think : 
+THINK =>
+when they think we just need to print a message
+“X is thinking” (X is the philo number)
+
+SLEEP =>
+When they sleep we need to make them sleep the length of the input 
+inserted by the user using our ft_usleep (described in the bottom 
+of this page) and then print the message “X is sleeping”.
+
+EAT =>
+We will lock the right fork first using pthread_mutex_lock 
+and print the message, and do the same with the left fork.
+Then he will eat using ft_usleep again and only then he will
+drop the forks by unlocking the locks, before that we change
+some variables that give our monitor indications but that’s the general idea.
+
+---------- Monitor --------
+This thread will be running and monitoring the whole program, it has 2 checks
+in it that run infinitely until a philo dies or they all ate the number of
+meals they need to (last input argument). Basically, we will check that the
+time a philo needs to die didn’t surpass the last meal he had and that he is
+not concurrently eating. If he indeed died we change the dead flag to 1 and
+that will break the loop in all of the threads. The other check is to see if
+all the philos finished eating the amount of meals they need to, and if they
+did we will again change the dead flag to one and break the threads loop.
+
+
+5. Destroying all the mutexes
+The last step is to Destroy all the mutexes you initialized, otherwise,
+they won’t work. In this step, we will free all the data we allocated
+if we chose to allocate it(we didn’t).
