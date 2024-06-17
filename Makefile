@@ -6,7 +6,7 @@
 #    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 18:59:35 by jeza              #+#    #+#              #
-#    Updated: 2024/06/14 18:24:52 by marvin           ###   ########.fr        #
+#    Updated: 2024/06/17 15:52:56 by marvin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,24 +17,19 @@ NAME = philosophers
 CC := gcc
 
 # Options de compilation
-CFLAGS := -Wall -Wextra -Werror -Iheaders/ -g
+CFLAGS := -Wall -Wextra -Werror -Iheaders/ -pthread -g
 
 #Liste des fichiers source.
-SRCS = 
-
-LIBFT = Libft/libft.a
-GETNEXTLINE = get_next_line/get_next_line.c get_next_line/get_next_line_utils.c
-PRINTF = ft_printf/libftprintf.a
+SRCS = Sources/main.c Sources/utils.c \
 
 OBJS = $(SRCS:.c=.o)
-GETNEXTLINE_OBJ := $(GETNEXTLINE:.c=.o)
 
 # Regle par defaut pour l'executable
-all: author project $(NAME)
+all: author $(NAME)
 
 # Regles pour afficher l'auteur et le projet.
 author:
-	@echo "Author : jeguerin
+	@echo "Author : jeguerin\n"
 	@echo "Project : Philosophers\n"
 
 $(LIBFT):
@@ -47,21 +42,16 @@ $(PRINTF):
 # $(NAME): $(OBJS) $(LIBFT) $(PRINTF) $(GETNEXTLINE_OBJ)
 # 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(PRINTF) $(GETNEXTLINE_OBJ) -o $(NAME)
 
-$(NAME): $(OBJS) $(LIBFT) $(PRINTF) $(GETNEXTLINE_OBJ)
-	$(CC) $(CFLAGS) $(OBJS) $(GETNEXTLINE_OBJ) $(LIBFT) $(PRINTF) -o $(NAME) -lreadline
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 # Regle pour nettoyer les fichiers objets.
 clean:
 	$(RM) $(OBJS)
-	$(RM) $(GETNEXTLINE_OBJ)
-	make clean -C Libft
-	make clean -C ft_printf
 
 # Regle pour nettoyer les fichiers objets et l'executable.
 fclean: clean
 	$(RM) $(NAME)
-	make fclean -C Libft
-	make fclean -C ft_printf
 
 # Regle pour reconstruire le projet (clean, puis all)
 re: author fclean all

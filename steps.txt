@@ -1,4 +1,4 @@
-1. Checking valid input
+1. Checking valid input => DONE
 
 First thing to do, before initializing is to check the
 program input.
@@ -82,3 +82,8 @@ did we will again change the dead flag to one and break the threads loop.
 The last step is to Destroy all the mutexes you initialized, otherwise,
 they won’t work. In this step, we will free all the data we allocated
 if we chose to allocate it(we didn’t).
+
+
+a. Techniques pour Éviter les Deadlocks
+Ordre de Prise des Fourchettes :
+Assurez-vous que les philosophes prennent les fourchettes dans un ordre fixe.
