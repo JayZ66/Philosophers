@@ -87,3 +87,8 @@ if we chose to allocate it(we didn’t).
 a. Techniques pour Éviter les Deadlocks
 Ordre de Prise des Fourchettes :
 Assurez-vous que les philosophes prennent les fourchettes dans un ordre fixe.
+
+WARNING : 
+- Necessaire de creer 2 threads par philosophe (un de plus pour
+checker la mort du philo sinon il attend indéfiniment qu'il termine).
+- Créer un autre thread pour informer les autres (philo) qu'un philo est dead.
