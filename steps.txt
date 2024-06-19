@@ -30,13 +30,24 @@ He created 2 structures :
 2 mutex pointers for the forks & on dead pointer which points
 to the dead flag in the prog. struct.
 
-3. Initializaton : 
+3. Initializaton : + CREATE a thread that will monitor everything.
 Memory on the stack =>
 initializing a philo structure array, a mutex array for the forks 
 and the program structure all in the main. From there I initialize 
 the program variables, initialize all the mutexes for the mutex 
 fork array, and lastly the philosophers — input variables and point 
 the pointers to all the mutexes and the dead_flag.
+
+for (int i = 0; i < params->number_of_philosophers; i++)
+    {
+        params->philosophers[i].id = i + 1;
+        params->philosophers[i].left_fork = &params->forks[i];
+        params->philosophers[i].right_fork = &params->forks[(i + 1) % params->number_of_philosophers];
+        params->philosophers[i].last_meal_time = get_timestamp();
+        params->philosophers[i].meals_eaten = 0;
+        params->philosophers[i].params = params;
+        pthread_create(&params->philosophers[i].thread, NULL, philosopher_routine, &params->philosophers[i]);
+    }
 
 4. Thread creation, Philo routine & monitor.
 Now we need to create the threads and join them. We will create 
@@ -45,7 +56,16 @@ thread and we will create an extra thread (I called it observer)
 which will monitor everything. Each philo thread will run the philo 
 routine function and the observer will run the monitor function.
 
+WARNING : each time your philo is doing something you lock
+just before, then print your message & unlock when the action
+is over !
+
 ---------- Philo routine ---------
+IMPORTANT INFO :
+To pass the info of the struct. we have to
+declare a var. of our struct & give it (as a "value") the
+param (casted) of the routine function !!!
+
 The routine will be the function executed over and over by the philos,
 Basically ,I created a loop that will break as soon as the dead flag is 1, 
 in other words as soon as a philo is dead.
