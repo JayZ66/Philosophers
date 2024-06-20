@@ -114,28 +114,90 @@ int	check_philo_data(int *args)
 	return (0);
 }
 
-void	*routine()
+// void	*routine()
+// {
+	
+// }
+
+void	initializing_table(int *args, t_table *table)
 {
-	printf("Test from threads\n");
-	sleep(3);
-	printf("Ending thread\n");
-	return (NULL);
+	table->nb_of_philos = args[0];
+	table->time_to_die = args[1];
+	table->time_to_eat = args[2];
+	table->time_to_sleep = args[3];
+	if (args[4])
+		table->nb_of_times_philo_has_to_eat = args[4];
+	table->dead = 0;
+	table->forks = malloc(sizeof(pthread_mutex_t) * table->nb_of_philos);
+	table->philos = malloc(sizeof(t_philosophers) * table->nb_of_philos);
+	if (!table->forks || !table->philos)
+	{
+		write(1, "Memory error\n", 13);
+		free(args);
+		free(table->philos);
+		free(table->forks);
+	}
 }
+
+// Initialisation des mutex
+void	initializing_mutexes(t_table *table)
+{
+	// For forks need to make a loop for : one philo = one_fork
+	size_t	i;
+
+	i = 0;
+	while (i < table->nb_of_philos)
+	{
+		pthread_mutex_init(&table->forks[i], NULL);
+		i++;
+	}
+	// Initialize other mutexes.
+	pthread_mutex_init(&table->death_mutex, NULL); // + mutex pour check mort chq philo so warning for not reading at the same time.
+	pthread_mutex_init(&table->write_mutex, NULL);
+	// pthread_mutex_init(&table->eat_mutex, NULL);
+}
+
+
+// Initialisation des philos.
+void	initializing_philos(t_table *table)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < table->nb_of_philos)
+	{
+		table->philos[i].id = i;
+		table->philos[i].nb_of_meals = 0;
+		table->philos[i].table = &table;
+		table->philos[i].left_fork = &table->forks[i];
+		table->philos[i].right_fork = &table->forks[(i + 1) % table->nb_of_philos];
+	}
+
+}
+
+// Création des threads.
+
+// Créer la routine (en castant le param. avec notre struct).
+
+// Join philos threads. (end)
+
+// Détruire mutex (end)
 
 int	main(int argc, char **argv)
 {
 	int	*args;
+	t_table	table;
 
 	if (manage_errors(argc, argv) == 1)
 		return (1);
 	else
 		args = convert_to_digit(argv); // Convert args. into integer.
-	if (check_philo_data(args) == 1)
+	if (check_philo_data(args) == 1) // Do i keep argv var. ?
 		return (1);
-	pthread_t	t1;
-	if (pthread_create(&t1, NULL, &routine, NULL) != 0)
-		return (1);
-	if (pthread_join(t1, NULL) != 0)
-		return (2);
+	// Initializing
+	initializing_table(args, &table);
+	initializing_mutexes(&table);
+	initializing_philos(&table);
+	// Creating threads.
 	return (0);
 }

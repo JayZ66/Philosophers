@@ -24,6 +24,46 @@
 # include <signal.h>
 # include <pthread.h>
 
+typedef struct s_philosophers
+{
+	int				id;
+	int				nb_of_meals;
+	pthread_t		thread;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	struct s_table *table;
+} t_philosophers;
+
+typedef struct s_table
+{
+	int				nb_of_philos;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				nb_of_times_philo_has_to_eat;
+	int				dead;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	death_mutex;
+	pthread_mutex_t	write_mutex;
+	pthread_mutex_t	eat_mutex;
+	t_philosophers *philos;
+} t_table;
+
+
+// UTILS
+int	ft_isdigit(int c);
+int	ft_strlen_tab(char **cmd_line);
+int	is_a_digit(char **argv);
+int	ft_atoi(const char *nptr);
+
+
+int	manage_errors(int argc, char **argv);
+int	*convert_to_digit(char **argv);
+
+#endif
+
+
+
 typedef struct s_philo
 {
 	pthread_t		t1;
@@ -80,16 +120,3 @@ typedef struct s_params
     pthread_mutex_t death_mutex;
     t_philosopher *philosophers;
 } t_params;
-
-
-// UTILS
-int	ft_isdigit(int c);
-int	ft_strlen_tab(char **cmd_line);
-int	is_a_digit(char **argv);
-int	ft_atoi(const char *nptr);
-
-
-int	manage_errors(int argc, char **argv);
-int	*convert_to_digit(char **argv);
-
-#endif
