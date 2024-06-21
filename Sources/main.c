@@ -12,10 +12,12 @@
 
 #include "../philosophers.h"
 
+
+// Créer la routine (en castant le param. avec notre struct).
 void	*routine()
 {
-	printf("OK CA MARCHE !");
-	exit(EXIT_FAILURE);
+	write(1, "OK\n", 3);
+	return (NULL);
 }
 
 void	initializing_table(int *args, t_table *table)
@@ -74,31 +76,20 @@ void	initializing_philos(t_table *table)
 	}
 }
 
-// Création des threads.
-void	create_philos_threads(t_table *table)
+// Détruire mutex (end)
+void	destroy_mutexes(t_table *table)
 {
-	// t_philosophers *philo;
 	int	i;
 
-	// philo = table->philos;
-	i = 0;
-	while (i < table->nb_of_philos)
+	i = table->nb_of_philos;
+	while (i > 0)
 	{
-		if (pthread_create(&table->philos[i].thread, NULL, &routine, NULL) != 0)
-		{
-			write(1, "Pb while creating threads\n", 26);
-			return ;
-		}
-		i++;
-	} // Créer un thread en plus sans "données" pour checker la mort avec fonction à part.
-} // Creating pthread_join directly after.
-
-
-// Créer la routine (en castant le param. avec notre struct).
-
-// Join philos threads. (end)
-
-// Détruire mutex (end)
+		pthread_mutex_destroy(&table->forks[i], NULL);
+		i--;
+	}
+	pthread_mutex_destroy(&table->death_mutex);
+	pthread_mutex_destroy(&table->write_mutex);
+}
 
 int	main(int argc, char **argv)
 {
@@ -117,5 +108,6 @@ int	main(int argc, char **argv)
 	initializing_philos(&table);
 	// Creating threads.
 	create_philos_threads(&table);
+	join_philo_threads(&table, args);
 	return (0);
 }

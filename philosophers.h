@@ -58,10 +58,20 @@ int	ft_strlen_tab(char **cmd_line);
 int	is_a_digit(char **argv);
 int	ft_atoi(const char *nptr);
 
-
+// MANAGING ARGS
 int	manage_errors(int argc, char **argv);
 int	*convert_to_digit(char **argv);
-
 int	check_philo_data(int *args);
+
+// INITIALIZATION OF STRUCTURES
+void	initializing_table(int *args, t_table *table);
+void	initializing_mutexes(t_table *table);
+void	initializing_philos(t_table *table);
+
+
+// MANAGING THREADS
+void	create_philos_threads(t_table *table);
+void	join_philo_threads(t_table *table, int *args);
+void	*routine();
 
 #endif
