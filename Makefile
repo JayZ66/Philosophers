@@ -6,7 +6,7 @@
 #    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 18:59:35 by jeza              #+#    #+#              #
-#    Updated: 2024/06/17 15:52:56 by marvin           ###   ########.fr        #
+#    Updated: 2024/06/21 11:38:50 by marvin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ CC := gcc
 CFLAGS := -Wall -Wextra -Werror -Iheaders/ -pthread -g
 
 #Liste des fichiers source.
-SRCS = Sources/main.c Sources/utils.c \
+SRCS = Sources/main.c Sources/utils.c Sources/manage_args \
 
 OBJS = $(SRCS:.c=.o)
 

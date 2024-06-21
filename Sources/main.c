@@ -12,112 +12,11 @@
 
 #include "../philosophers.h"
 
-// - The prog. will receive 4/5 arguments => DONE
-
-// Check if it's an integer ! => DONE
-// Limit to 200 philos max. => DONE
-// Each nb should be bigger than 0 (except the nb of meals for each philo). => DONE
-// Convert arguments into integer ! => DONE
-
-/*
-- 1 — The number of philosophers
-- 2 — The time a philosopher will die if he doesn’t eat
-- 3 — The time it takes a philosopher to eat
-- 4 — The time it takes a philosopher to sleep
-- 5 — Number of times all the philosophers need to eat before terminating the program (OPTIONAL)
-*/
-
-int	is_a_digit(char **argv)
+void	*routine()
 {
-	size_t	i;
-	size_t	j;
-
-	i = 1;
-	while (argv[i])
-	{
-		if (argv[i] ==  NULL)
-			return (1);
-		j = 0;
-		while (argv[i][j])
-		{
-			if (argv[i][0] == '-' || argv[i][0] == '+')
-				j++;
-			if (ft_isdigit(argv[i][j]) == 1) // Check si suffit pour un signe + rien derrière ou pas digit.
-				return (1);
-			j++;
-		}
-		i++;	
-	}
-	return (0);
+	printf("OK CA MARCHE !");
+	exit(EXIT_FAILURE);
 }
-
-int	manage_errors(int argc, char **argv)
-{
-	if (argc < 4 || argc > 5)
-	{
-		printf("Invalid number of arguments\n");
-		return (1);
-	}
-	else if (is_a_digit(argv) == 1)
-	{
-		printf("Argument needs to be a digit\n");
-		return (1);
-	}
-	return (0);
-}
-
-int	*convert_to_digit(char **argv)
-{
-	int		*args;
-	size_t	i;
-	size_t	j;
-
-	i = 1;
-	args = malloc(sizeof(int) * (ft_strlen_tab(argv) + 1));
-	if (!args)
-	{
-		printf("Problem with memory allocation\n");
-		return (NULL);
-	}
-	j = 0;
-	while (argv[i])
-	{
-		args[j] = ft_atoi(argv[i]);
-		j++;
-		i++;
-	}
-	args[j] = '\0';
-	return (args);
-}
-
-//argv[0] => Max. 200 philosophers.
-// Everything need to be higher than 0 (except optional part).
-int	check_philo_data(int *args)
-{
-	size_t	i;
-
-	if (args[0] > 200)
-	{
-		printf("The nb of philosophers can't be higher than 200\n");
-		return (1);
-	}
-	i = 0;
-	while (args[i])
-	{
-		if (args[i] < 0)
-		{
-			printf("The time can't be less than 0\n");
-			return (1);
-		}
-		i++;
-	}
-	return (0);
-}
-
-// void	*routine()
-// {
-	
-// }
 
 void	initializing_table(int *args, t_table *table)
 {
@@ -142,8 +41,8 @@ void	initializing_table(int *args, t_table *table)
 // Initialisation des mutex
 void	initializing_mutexes(t_table *table)
 {
-	// For forks need to make a loop for : one philo = one_fork
-	size_t	i;
+	// For forks need to make a loop : one philo = one_fork
+	int	i;
 
 	i = 0;
 	while (i < table->nb_of_philos)
@@ -161,21 +60,39 @@ void	initializing_mutexes(t_table *table)
 // Initialisation des philos.
 void	initializing_philos(t_table *table)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
 	while (i < table->nb_of_philos)
 	{
 		table->philos[i].id = i;
 		table->philos[i].nb_of_meals = 0;
-		table->philos[i].table = &table;
+		table->philos[i].table = table; // Check if reference is needed (&)
 		table->philos[i].left_fork = &table->forks[i];
 		table->philos[i].right_fork = &table->forks[(i + 1) % table->nb_of_philos];
+		i++;
 	}
-
 }
 
 // Création des threads.
+void	create_philos_threads(t_table *table)
+{
+	// t_philosophers *philo;
+	int	i;
+
+	// philo = table->philos;
+	i = 0;
+	while (i < table->nb_of_philos)
+	{
+		if (pthread_create(&table->philos[i].thread, NULL, &routine, NULL) != 0)
+		{
+			write(1, "Pb while creating threads\n", 26);
+			return ;
+		}
+		i++;
+	} // Créer un thread en plus sans "données" pour checker la mort avec fonction à part.
+} // Creating pthread_join directly after.
+
 
 // Créer la routine (en castant le param. avec notre struct).
 
@@ -199,5 +116,6 @@ int	main(int argc, char **argv)
 	initializing_mutexes(&table);
 	initializing_philos(&table);
 	// Creating threads.
+	create_philos_threads(&table);
 	return (0);
 }
