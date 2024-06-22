@@ -22,18 +22,18 @@ void	create_philos_threads(t_table *table)
 	i = 0;
 	while (i < table->nb_of_philos)
 	{
-		if (pthread_create(&table->philos[i].thread, NULL, &routine, NULL) != 0)
+		if (pthread_create(&table->philos[i].thread, NULL, &routine, &table->philos[i]) != 0)
 		{
 			write(1, "Pb while creating threads\n", 26);
 			return ;
 		}
 		i++;
 	} // Créer un thread en plus sans "données" pour checker la mort avec fonction à part.
-	if (pthread_create(&philos->thread, NULL, &checking, NULL) != 0) // CHECK WHAT'S TO SEND !!!
-	{
-		write(1, "Pb while creating threads\n", 26);
-		return ;
-	}
+	// if (pthread_create(&philos->thread, NULL, &checking, NULL) != 0) // CHECK WHAT'S TO SEND !!! + DETACH OR NOT ?
+	// {
+	// 	write(1, "Pb while creating threads\n", 26);
+	// 	return ;
+	// }
 }
 
 // Join philos threads.

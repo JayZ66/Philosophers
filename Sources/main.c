@@ -14,8 +14,19 @@
 
 
 // Créer la routine (en castant le param. avec notre struct).
-void	*routine()
+void	*routine(void *arg)
 {
+	t_philosophers	*philo = (t_philosophers *)arg;
+	t_table			*table = philo->table;
+	int				i;
+
+	i = 0;
+	if (i == 0)
+	{
+		pthread_mutex_lock(&table->write_mutex);
+		printf("%d\n", table->nb_of_philos);
+		pthread_mutex_unlock(&table->write_mutex);
+	}
 	write(1, "OK\n", 3);
 	return (NULL);
 }
@@ -69,7 +80,7 @@ void	initializing_philos(t_table *table)
 	{
 		table->philos[i].id = i;
 		table->philos[i].nb_of_meals = 0;
-		table->philos[i].table = table; // Check if reference is needed (&)
+		table->philos[i].table = table;
 		table->philos[i].left_fork = &table->forks[i];
 		table->philos[i].right_fork = &table->forks[(i + 1) % table->nb_of_philos];
 		i++;
@@ -77,14 +88,14 @@ void	initializing_philos(t_table *table)
 }
 
 // Détruire mutex (end)
-void	destroy_mutexes(t_table *table)
+void	destroy_mutexes(t_table *table) // CHECK IF RIGHT WAY TO DO IT !
 {
 	int	i;
 
 	i = table->nb_of_philos;
 	while (i > 0)
 	{
-		pthread_mutex_destroy(&table->forks[i], NULL);
+		pthread_mutex_destroy(&table->forks[i]);
 		i--;
 	}
 	pthread_mutex_destroy(&table->death_mutex);
@@ -109,5 +120,6 @@ int	main(int argc, char **argv)
 	// Creating threads.
 	create_philos_threads(&table);
 	join_philo_threads(&table, args);
+	// destroy_mutexes(&table);
 	return (0);
 }

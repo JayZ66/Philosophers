@@ -47,7 +47,7 @@ typedef struct s_table
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	death_mutex;
 	pthread_mutex_t	write_mutex;
-	pthread_mutex_t	eat_mutex;
+	// pthread_mutex_t	eat_mutex;
 	t_philosophers *philos;
 } t_table;
 

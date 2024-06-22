@@ -17,7 +17,7 @@ Let's analyze the input :
 - nb should be bigger than 0 (all) except the nb of meals each philo need to eat.
 - Limit to 200 philos max ! (check the correction)
 
-2. Structures
+2. Structures => DONE
 
 Each philo needs to be a thread & all the data needs to pass
 to the routine functions ! + RECODER USLEEP !!
@@ -37,17 +37,6 @@ and the program structure all in the main. From there I initialize
 the program variables, initialize all the mutexes for the mutex 
 fork array, and lastly the philosophers — input variables and point 
 the pointers to all the mutexes and the dead_flag.
-
-for (int i = 0; i < params->number_of_philosophers; i++)
-    {
-        params->philosophers[i].id = i + 1;
-        params->philosophers[i].left_fork = &params->forks[i];
-        params->philosophers[i].right_fork = &params->forks[(i + 1) % params->number_of_philosophers];
-        params->philosophers[i].last_meal_time = get_timestamp();
-        params->philosophers[i].meals_eaten = 0;
-        params->philosophers[i].params = params;
-        pthread_create(&params->philosophers[i].thread, NULL, philosopher_routine, &params->philosophers[i]);
-    }
 
 WARNING : 
 1. You create your threads (one for each philo) in the loop
