@@ -15,8 +15,10 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <stdarg.h>
 # include <string.h>
 # include <time.h>
+# include <sys/time.h>
 # include <errno.h> // perror - strerror
 # include <unistd.h> // access - dup2 - execve - fork - pipe - waitpid
 # include <sys/wait.h> // Wait
@@ -30,6 +32,7 @@ typedef struct s_philosophers
 {
 	int				id;
 	int				nb_of_meals;
+	long long		last_meal;
 	pthread_t		thread;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
@@ -73,5 +76,18 @@ void	initializing_philos(t_table *table);
 void	create_philos_threads(t_table *table);
 void	join_philo_threads(t_table *table, int *args);
 void	*routine();
+
+// PRINTF
+int		count_nb(int n, int base);
+int		count_unsigned_nb(unsigned int n, int base);
+int		count_unsigned_nb_add(unsigned long int n, int base);
+int		print_format(const char spe, va_list args);
+int		ft_printf(const char *str, ...);
+int		ft_putchar(char c);
+int		ft_putstr(char *str);
+int		ft_unsigned_putnbr(unsigned int nb);
+int		ft_putnb(int nb);
+int		ft_putnb_hexa(unsigned int nb, char *base);
+int		ft_putnb_hexa_add(void *ptr, char *base);
 
 #endif

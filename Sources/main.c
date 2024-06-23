@@ -12,24 +12,66 @@
 
 #include "../philosophers.h"
 
+long long get_current_time() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (long long) (tv.tv_sec * 1000LL + tv.tv_usec / 1000LL);
+}
 
 // Créer la routine (en castant le param. avec notre struct).
 void	*routine(void *arg)
 {
 	t_philosophers	*philo = (t_philosophers *)arg;
-	t_table			*table = philo->table;
+	// t_table			*table = philo->table;
+	// struct timeval tv;
 	int				i;
 
 	i = 0;
-	if (i == 0)
+	while (1)
 	{
-		pthread_mutex_lock(&table->write_mutex);
-		printf("%d\n", table->nb_of_philos);
-		pthread_mutex_unlock(&table->write_mutex);
+		// THINKING
+		pthread_mutex_lock(&philo->table->write_mutex); // SEGFAULT !!!
+		// ft_printf("ID : %d\n", philo->id);
+		write(1, "OK\n", 3);
+		pthread_mutex_unlock(&philo->table->write_mutex);
+		// pthread_mutex_lock(&table->write_mutex);
+		// ft_printf("%d is thinking\n", philo->id); // WARNING TIME STAMP TO PUT !!
+		// pthread_mutex_unlock(&table->write_mutex);
+		// // TAKING LEFT FORK
+		// pthread_mutex_lock(philo->left_fork);
+		// pthread_mutex_lock(&table->write_mutex);
+		// ft_printf("%d has taken a fork\n", philo->id);
+		// pthread_mutex_unlock(&table->write_mutex);
+		// // TAKING RIGHT FORK
+		// pthread_mutex_lock(philo->right_fork);
+		// pthread_mutex_lock(&table->write_mutex);
+		// ft_printf("%d has taken a fork\n", philo->id);
+		// pthread_mutex_unlock(&table->write_mutex);
+		// // EATING
+		// pthread_mutex_lock(&table->write_mutex);
+		// ft_printf("%d is eating\n", philo->id);
+		// pthread_mutex_unlock(&table->write_mutex);
+		// philo->nb_of_meals++;
+		// gettimeofday(&tv, NULL);
+		// philo->last_meal = (tv.tv_sec * 1000LL) + (tv.tv_usec / 1000LL);
+		// usleep(table->time_to_eat);
+
+		// // LEAVE THE FORK
+		// pthread_mutex_unlock(philo->left_fork);
+		// pthread_mutex_unlock(philo->right_fork);
+
+		// // SLEEPING
+		// pthread_mutex_lock(&table->write_mutex);
+		// ft_printf("%d is sleeping\n", philo->id);
+		// pthread_mutex_unlock(&table->write_mutex);
+		// usleep(table->time_to_sleep);
+		i++;
+		if (i == 5)
+			break ;
 	}
-	write(1, "OK\n", 3);
 	return (NULL);
 }
+// Fork : first left, then right
 
 void	initializing_table(int *args, t_table *table)
 {
@@ -69,6 +111,16 @@ void	initializing_mutexes(t_table *table)
 	// pthread_mutex_init(&table->eat_mutex, NULL);
 }
 
+// void	initializing_philos_mutexes(t_table *table)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (i < table->nb_of_philos)
+// 	{
+// 		pthread_mutex_init(&table->philos[i])
+// 	}
+// }
 
 // Initialisation des philos.
 void	initializing_philos(t_table *table)
@@ -92,11 +144,11 @@ void	destroy_mutexes(t_table *table) // CHECK IF RIGHT WAY TO DO IT !
 {
 	int	i;
 
-	i = table->nb_of_philos;
-	while (i > 0)
+	i = 0;
+	while (i < table->nb_of_philos)
 	{
 		pthread_mutex_destroy(&table->forks[i]);
-		i--;
+		i++;
 	}
 	pthread_mutex_destroy(&table->death_mutex);
 	pthread_mutex_destroy(&table->write_mutex);
@@ -115,11 +167,15 @@ int	main(int argc, char **argv)
 		return (1);
 	// Initializing
 	initializing_table(args, &table);
-	initializing_mutexes(&table);
 	initializing_philos(&table);
+	initializing_mutexes(&table);
+	// initializing_philos_mutexes(&table);
 	// Creating threads.
 	create_philos_threads(&table);
 	join_philo_threads(&table, args);
-	// destroy_mutexes(&table);
+	destroy_mutexes(&table);
+	free(args);
+	free(table.philos);
+	free(table.forks);
 	return (0);
 }

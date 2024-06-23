@@ -6,7 +6,7 @@
 #    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 18:59:35 by jeza              #+#    #+#              #
-#    Updated: 2024/06/21 18:18:51 by marvin           ###   ########.fr        #
+#    Updated: 2024/06/23 18:09:39 by marvin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ CFLAGS := -Wall -Wextra -Werror -Iheaders/ -pthread -g
 
 #Liste des fichiers source.
 SRCS = Sources/main.c Sources/utils.c Sources/manage_args.c \
-		Sources/manage_threads.c \
+		Sources/manage_threads.c Sources/count_nb.c \
+		Sources/ft_printf.c Sources/ft_putnb.c \
 
 OBJS = $(SRCS:.c=.o)
 
