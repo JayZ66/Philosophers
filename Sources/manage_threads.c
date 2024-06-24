@@ -16,6 +16,7 @@
 void	create_philos_threads(t_table *table)
 {
 	// t_philosophers *philo;
+	pthread_t	monitor_thread;
 	int	i;
 
 	// philo = table->philos;
@@ -29,11 +30,12 @@ void	create_philos_threads(t_table *table)
 		}
 		i++;
 	} // Créer un thread en plus sans "données" pour checker la mort avec fonction à part.
-	// if (pthread_create(&philos->thread, NULL, &checking, NULL) != 0) // CHECK WHAT'S TO SEND !!! + DETACH OR NOT ?
-	// {
-	// 	write(1, "Pb while creating threads\n", 26);
-	// 	return ;
-	// }
+	if (pthread_create(&monitor_thread, NULL, &monitor, table) != 0) // CHECK WHAT'S TO SEND !!! + DETACH OR NOT ?
+	{
+		write(1, "Pb while creating threads\n", 26);
+		return ;
+	}
+	pthread_detach(monitor_thread);
 }
 
 // Join philos threads.
@@ -54,5 +56,6 @@ void	join_philo_threads(t_table *table, int *args)
 	free(args);
 	free(table->forks);
 	free(table->philos);
+	free(table);
 }
 

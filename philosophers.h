@@ -32,7 +32,7 @@ typedef struct s_philosophers
 {
 	int				id;
 	int				nb_of_meals;
-	long long		last_meal;
+	int				last_meal;
 	pthread_t		thread;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
@@ -48,9 +48,9 @@ typedef struct s_table
 	int				nb_of_times_philo_has_to_eat;
 	int				dead;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t	death_mutex;
 	pthread_mutex_t	write_mutex;
-	// pthread_mutex_t	eat_mutex;
 	t_philosophers *philos;
 } t_table;
 
@@ -75,7 +75,8 @@ void	initializing_philos(t_table *table);
 // MANAGING THREADS
 void	create_philos_threads(t_table *table);
 void	join_philo_threads(t_table *table, int *args);
-void	*routine();
+void	*routine(void *arg);
+void	*monitor(void *arg);
 
 // PRINTF
 int		count_nb(int n, int base);

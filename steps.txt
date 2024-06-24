@@ -42,7 +42,7 @@ WARNING :
 1. You create your threads (one for each philo) in the loop
 2. Then you join it
 3. In "routine" function we will create another thread for each
-philo that we will detach in order to monitore the state
+philo that we will detach in order to monitor the state
 of each philo.
 
 
@@ -64,7 +64,7 @@ declare a var. of our struct & give it (as a "value") the
 param (casted) of the routine function !!!
 
 The routine will be the function executed over and over by the philos,
-Basically ,I created a loop that will break as soon as the dead flag is 1, 
+Basically, i created a loop that will break as soon as the dead flag is 1, 
 in other words as soon as a philo is dead.
 
 In our loop they will eat, sleep & think : 
@@ -109,3 +109,39 @@ WARNING :
 - Necessaire de creer 2 threads par philosophe (un de plus pour
 checker la mort du philo sinon il attend indéfiniment qu'il termine).
 - Créer un autre thread pour informer les autres (philo) qu'un philo est dead.
+
+
+
+Moniteur
+Initialisation
+
+Le moniteur récupère un pointeur vers la structure de la table contenant toutes les données nécessaires.
+Boucle principale
+
+La boucle continue tant que le drapeau dead est à 0.
+Vérification de la mort
+
+Parcourir tous les philosophes pour vérifier s'ils sont morts.
+Si le temps actuel - temps du dernier repas > temps pour mourir, définir dead à 1 et afficher le message de mort.
+Vérification des repas
+
+Parcourir tous les philosophes pour vérifier s'ils ont tous mangé le nombre requis de repas.
+Si tous les philosophes ont atteint le nombre de repas requis, définir dead à 1 pour arrêter les routines.
+
+ft_usleep
+Fonctionnement
+Implémenter une version de usleep utilisant gettimeofday pour mesurer le temps écoulé et faire une boucle d'attente.
+Mise en place
+Initialisation de la table et des philosophes
+
+Initialiser les structures t_table et t_philosophers.
+Initialiser les mutexes.
+Créer les threads pour les philosophes et le moniteur.
+Création des threads
+
+Utiliser pthread_create pour créer un thread pour chaque philosophe et pour le moniteur.
+Utiliser pthread_join pour attendre la fin de chaque thread philosophe.
+Exécution de la routine et du moniteur
+Chaque philosophe exécute sa routine de manière concurrente.
+Le moniteur vérifie en continu l'état des philosophes et met à jour le drapeau dead si nécessaire.
+Les routines des philosophes se terminent lorsque dead est mis à 1 par le moniteur.

@@ -33,7 +33,7 @@ All the threads were stuck at this sleep(1) in routine () function,
 => We can use the pthread_exit() function, that will wait
 for those threads that are part of the same process (main thread).
 
-Detached thread is usually used when you a long running
+Detached thread is usually used when you have a long running
 process that we want to start inside the main thread, but
 we don't want to let the main thread keep on running.
 
@@ -49,7 +49,7 @@ Because this is not really setting the thread to be detached,
 it's just creating the thread in a non-detached state &
 then it's setting/changing it to be detached.
 
-How can we create it as e detached thread without having
+How can we create it as detached thread without having
 to change it after we've created it.
 => To do this we're going to make use of the second param.
 inside the pthread_create !
