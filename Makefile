@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
+#    By: jeguerin <jeguerin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 18:59:35 by jeza              #+#    #+#              #
-#    Updated: 2024/06/23 18:09:39 by marvin           ###   ########.fr        #
+#    Updated: 2024/06/25 19:37:03 by jeguerin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ CFLAGS := -Wall -Wextra -Werror -Iheaders/ -pthread -g
 #Liste des fichiers source.
 SRCS = Sources/main.c Sources/utils.c Sources/manage_args.c \
 		Sources/manage_threads.c Sources/count_nb.c \
-		Sources/ft_printf.c Sources/ft_putnb.c \
+		Sources/ft_printf.c Sources/ft_putnb.c Sources/manage_time.c \
 
 OBJS = $(SRCS:.c=.o)
 

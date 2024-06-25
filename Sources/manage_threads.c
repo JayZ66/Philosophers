@@ -15,11 +15,9 @@
 // Création des threads.
 void	create_philos_threads(t_table *table)
 {
-	// t_philosophers *philo;
 	pthread_t	monitor_thread;
 	int	i;
 
-	// philo = table->philos;
 	i = 0;
 	while (i < table->nb_of_philos)
 	{
@@ -39,7 +37,7 @@ void	create_philos_threads(t_table *table)
 }
 
 // Join philos threads.
-void	join_philo_threads(t_table *table, int *args)
+void	join_philo_threads(t_table *table)
 {
 	int	i;
 
@@ -53,9 +51,5 @@ void	join_philo_threads(t_table *table, int *args)
 		}
 		i++;
 	}
-	free(args);
-	free(table->forks);
-	free(table->philos);
-	free(table);
 }
 

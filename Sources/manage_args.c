@@ -53,7 +53,7 @@ int	is_a_digit(char **argv)
 
 int	manage_errors(int argc, char **argv)
 {
-	if (argc < 4 || argc > 5)
+	if (argc < 5 || argc > 6)
 	{
 		printf("Invalid number of arguments\n");
 		return (1);
@@ -101,7 +101,7 @@ int	check_philo_data(int *args)
 		printf("The nb of philosophers can't be higher than 200\n");
 		return (1);
 	}
-	i = 0;
+	i = 1;
 	while (args[i])
 	{
 		if (args[i] < 0)

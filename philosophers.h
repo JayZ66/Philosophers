@@ -66,6 +66,9 @@ int	manage_errors(int argc, char **argv);
 int	*convert_to_digit(char **argv);
 int	check_philo_data(int *args);
 
+// MANAGING TIME
+long get_current_time();
+
 // INITIALIZATION OF STRUCTURES
 void	initializing_table(int *args, t_table *table);
 void	initializing_mutexes(t_table *table);
@@ -74,7 +77,7 @@ void	initializing_philos(t_table *table);
 
 // MANAGING THREADS
 void	create_philos_threads(t_table *table);
-void	join_philo_threads(t_table *table, int *args);
+void	join_philo_threads(t_table *table);
 void	*routine(void *arg);
 void	*monitor(void *arg);
 
