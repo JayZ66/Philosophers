@@ -28,12 +28,13 @@ void	create_philos_threads(t_table *table)
 		}
 		i++;
 	} // Créer un thread en plus sans "données" pour checker la mort avec fonction à part.
-	if (pthread_create(&monitor_thread, NULL, &monitor, table) != 0) // CHECK WHAT'S TO SEND !!! + DETACH OR NOT ?
+	if (pthread_create(&monitor_thread, NULL, &monitor, table) != 0)
 	{
 		write(1, "Pb while creating threads\n", 26);
 		return ;
 	}
-	pthread_detach(monitor_thread);
+	pthread_join(monitor_thread, NULL);
+	// pthread_detach(monitor_thread);
 }
 
 // Join philos threads.
