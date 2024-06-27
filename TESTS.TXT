@@ -1,0 +1,15 @@
+
+
+1 800 200 200 :
+WORKS but not with too high data !
+
+Test : 5 800 200 200 => => KO (boucle infinie !!!)
+Ne fonctionne pas BUT lower than 5 philo it's working !!
+
+test - nb of meals : 5 800 200 200 7 
+
+test - No death : 4 410 200 200 => KO (boucle infinie !!!)
+
+test - One dies : 4 310 200 100 => KO (boucle infinie !!!)
+
+test - No more than 10 ms : 2 ...
