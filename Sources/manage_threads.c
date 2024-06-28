@@ -21,7 +21,7 @@ void	create_philos_threads(t_table *table)
 	i = 0;
 	while (i < table->nb_of_philos)
 	{
-		if (pthread_create(&table->philos[i].thread, NULL, &routine, &table->philos[i]) != 0)
+		if (pthread_create(&table->philos[i].thread, NULL, routine, &table->philos[i]) != 0)
 		{
 			write(1, "Pb while creating threads\n", 26);
 			return ;

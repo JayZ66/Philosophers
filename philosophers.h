@@ -26,6 +26,13 @@
 # include <signal.h>
 # include <pthread.h>
 
+#define COLOR_RESET    "\x1b[0m"
+#define COLOR_THINKING "\x1b[34m"
+#define COLOR_FORK     "\x1b[33m"
+#define COLOR_EATING   "\x1b[32m"
+#define COLOR_SLEEPING "\x1b[36m"
+#define COLOR_DEAD     "\x1b[31m"
+
 struct s_table;
 
 typedef struct s_philosophers
@@ -42,10 +49,10 @@ typedef struct s_philosophers
 typedef struct s_table
 {
 	int				nb_of_philos;
-	long int		time_to_die;
-	long int		time_to_eat;
-	long int		time_to_sleep;
-	long int		start_time;
+	int		time_to_die;
+	int		time_to_eat;
+	int		time_to_sleep;
+	int		start_time;
 	int				nb_of_times_philo_has_to_eat;
 	int				dead;
 	int				all_eaten;
@@ -69,7 +76,7 @@ int	*convert_to_digit(char **argv);
 int	check_philo_data(int *args);
 
 // MANAGING TIME
-long long get_current_time();
+long get_current_time();
 void    ft_usleep(long int sleep_in_ms);
 
 // INITIALIZATION OF STRUCTURES

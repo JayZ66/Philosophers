@@ -6,7 +6,7 @@
 /*   By: jeguerin <jeguerin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 19:36:40 by jeguerin          #+#    #+#             */
-/*   Updated: 2024/06/27 19:41:04 by jeguerin         ###   ########.fr       */
+/*   Updated: 2024/06/28 09:38:43 by jeguerin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 // Converting from microseconds to millieseconds.
 // Create structure for gettimeofday + using var. to stock the data.
-long long get_current_time()
+long get_current_time()
 {
     struct timeval time;
     
     gettimeofday(&time, NULL);
-    return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+    return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
 // Recode usleep with the function inside.
