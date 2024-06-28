@@ -204,49 +204,6 @@ void	*routine(void *arg)
 	return (arg);
 }
 
-// void *routine(void *arg) {
-//     t_philosophers *philo = (t_philosophers *)arg;
-
-//     while (!philo->table->dead) {
-//         printf("THINK %d\n", philo->id);
-
-//         pthread_mutex_t *first_fork = (philo->id % 2 == 0) ? philo->left_fork : philo->right_fork;
-//         pthread_mutex_t *second_fork = (philo->id % 2 == 0) ? philo->right_fork : philo->left_fork;
-
-//         pthread_mutex_lock(first_fork);
-//         printf("Fork 1 %d\n", philo->id);
-
-//         // Handle the case where there is only one philosopher
-//         if (first_fork == second_fork) {
-//             ft_usleep(philo->table->time_to_die);
-//            	printf("DEAD %d\n", philo->id);
-//             philo->table->dead = 1;
-//             pthread_mutex_unlock(first_fork);
-//             break;
-//         }
-
-//         pthread_mutex_lock(second_fork);
-//         printf("Fork 2 %d\n", philo->id);
-//         pthread_mutex_lock(&philo->table->death_mutex);
-//         philo->last_meal = get_current_time();
-//         printf("Eat %d\n", philo->id);
-//         pthread_mutex_unlock(&philo->table->death_mutex);
-
-//         ft_usleep(philo->table->time_to_eat);
-
-//         pthread_mutex_lock(&philo->table->meal_mutex);
-//         philo->nb_of_meals++;
-//         pthread_mutex_unlock(&philo->table->meal_mutex);
-
-//         pthread_mutex_unlock(second_fork);
-//         pthread_mutex_unlock(first_fork);
-
-//         printf("Sleep %d\n", philo->id);
-//         ft_usleep(philo->table->time_to_sleep);
-//     }
-//     return NULL;
-// }
-
 
 void	initializing_table(int *args, t_table *table)
 {
