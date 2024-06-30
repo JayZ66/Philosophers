@@ -24,23 +24,16 @@ int	check_death(t_table *table)
 	return (0);
 }
 
-void print_status(t_philosophers *philo, const char *status, const char *color) {
-    long timestamp = get_current_time();
-    pthread_mutex_lock(&philo->table->write_mutex);
-    if (!philo->table->dead) {
-        printf("%s%ld %d %s%s\n", color, timestamp, philo->id, status, COLOR_RESET);
-    }
-    pthread_mutex_unlock(&philo->table->write_mutex);
-}
-
 void	*monitor(void *arg)
 {
 	// t_philosophers	*philo;
 	t_table			*table;
 	int				i;
+	int				death;
 
 	table = (t_table *)arg;
-	while (!table->dead)
+	death = table->dead;
+	while (!death)
 	{
 		// if (check_death(table) == 1)
 		// {
@@ -63,11 +56,11 @@ void	*monitor(void *arg)
 			pthread_mutex_lock(&table->death_mutex);
 			if ((get_current_time() - table->philos[i].last_meal) > table->time_to_die)
 			{
-				table->dead = 1;
-				pthread_mutex_unlock(&table->death_mutex);
 				pthread_mutex_lock(&table->write_mutex);
 				ft_printf("%d ms: %d died\n", get_current_time() - table->start_time, table->philos[i].id);
 				pthread_mutex_unlock(&table->write_mutex);
+				table->dead = 1; // Should we CREATE A SPECIAL MUTEX ??
+				pthread_mutex_unlock(&table->death_mutex);
 			}
 			pthread_mutex_unlock(&table->death_mutex);
 			// pthread_mutex_unlock(&table->death_mutex);
@@ -77,51 +70,61 @@ void	*monitor(void *arg)
 			// 	break ;
 			// }
 			// pthread_mutex_lock(&table->meal_mutex);
-			if (table->nb_of_times_philo_has_to_eat != -1 && (table->philos[i].nb_of_meals >= table->nb_of_times_philo_has_to_eat))
+			// if (table->nb_of_times_philo_has_to_eat > 0 && (table->philos[i].nb_of_meals >= table->nb_of_times_philo_has_to_eat))
+			// {
+			// 	table->all_eaten++;
+			// 	pthread_mutex_lock(&table->death_mutex);
+			// 	printf("Philo : %d - Nb who eated full : %d\n", table->philos[i].id, table->all_eaten);
+			// 	printf("Nb of meals : %d of %d\n", table->philos[i].nb_of_meals, table->philos[i].id);
+			// 	pthread_mutex_unlock(&table->death_mutex);
+			// }
+			if (table->nb_of_times_philo_has_to_eat > 0)
 			{
-				table->all_eaten++;
-				pthread_mutex_lock(&table->death_mutex);
+				pthread_mutex_lock(table->meal_mutex);
+				if (table->philos[i].nb_of_meals >= table->nb_of_times_philo_has_to_eat)
+					table->all_eaten++;
+				pthread_mutex_unlock(table->meal_mutex);
+				pthread_mutex_lock(&table->write_mutex);
 				printf("Philo : %d - Nb who eated full : %d\n", table->philos[i].id, table->all_eaten);
 				printf("Nb of meals : %d of %d\n", table->philos[i].nb_of_meals, table->philos[i].id);
-				pthread_mutex_unlock(&table->death_mutex);
+				pthread_mutex_unlock(&table->write_mutex);
 			}
 			// printf("Nb times to eat : %d\n", table->nb_of_times_philo_has_to_eat);
 			// printf("Nb of meals : %d of %d\n", table->philos[i].nb_of_meals, table->philos[i].id);
-			if (table->all_eaten == table->nb_of_philos)
-			{
-				printf("OK\n");
-				// pthread_mutex_unlock(&table->meal_mutex);
-				pthread_mutex_lock(&table->death_mutex);
-				table->dead = 1;
-				pthread_mutex_unlock(&table->death_mutex);
-				break ;
-			}
-			// pthread_mutex_unlock(&table->meal_mutex);
 			i++;
 		}
+		if (table->nb_of_times_philo_has_to_eat > 0 && table->all_eaten == table->nb_of_philos)
+		{
+			pthread_mutex_lock(&table->write_mutex);
+			printf("OK\n");
+			printf("All philosophers ate\n");
+			// pthread_mutex_unlock(&table->meal_mutex);
+			pthread_mutex_lock(&table->death_mutex);
+			table->dead = 1;
+			pthread_mutex_unlock(&table->death_mutex);
+			pthread_mutex_unlock(&table->write_mutex);
+			// break ;
+		}
+		// pthread_mutex_unlock(&table->meal_mutex);
+		pthread_mutex_lock(&table->death_mutex);
+		death = table->dead;
+		pthread_mutex_unlock(&table->death_mutex);
 		usleep(1000);
 	}
-	return (arg);
+	return (NULL);
 }
 
 void	*routine(void *arg)
 {
 	t_philosophers	*philo;
 	t_table			*table;
-	// struct timeval	current;
+	int				death;
 
 	philo = (t_philosophers *)arg;
 	table = philo->table;
-	while (!table->dead)
+	death = philo->table->dead;
+	while (!death)
 	{
-		// pthread_mutex_lock(&table->death_mutex);
-		// if (table->dead == 1)
-		// {
-		// 	ft_usleep(table->time_to_die);
-		// 	pthread_mutex_unlock(&table->death_mutex);
-		// 	break ;
-		// }
-		// pthread_mutex_unlock(&table->death_mutex);
 		// THINKING
 		pthread_mutex_lock(&table->write_mutex);
 		ft_printf("%d ms: %d is thinking\n", get_current_time() - table->start_time, philo->id);
@@ -150,12 +153,22 @@ void	*routine(void *arg)
 			pthread_mutex_lock(&table->write_mutex);
 			ft_printf("%d ms: %d has taken a fork\n", get_current_time() - table->start_time, philo->id);
 			pthread_mutex_unlock(&table->write_mutex);
-			if (table->nb_of_philos == 1)
+			// if (table->nb_of_philos == 1)
+			// {
+			// 	ft_usleep(table->time_to_die);
+			// 	table->dead = 1;
+			// 	pthread_mutex_unlock(philo->right_fork);
+			// 	return (NULL);
+			// }
+			if (philo->left_fork == philo->right_fork)
 			{
 				ft_usleep(table->time_to_die);
-				table->dead = 1;
+				ft_printf("%d ms: %d died\n", get_current_time() - table->start_time, table->philos[i].id);
+				pthread_mutex_lock(table->death_mutex);
+				death = philo->table->dead = 1;
+				thread_mutex_unlock(table->death_mutex);
 				pthread_mutex_unlock(philo->right_fork);
-				return (NULL);
+				break ;
 			}
 			pthread_mutex_lock(philo->left_fork);
 			pthread_mutex_lock(&table->write_mutex);
@@ -172,9 +185,9 @@ void	*routine(void *arg)
 		pthread_mutex_unlock(&table->death_mutex);
 		ft_usleep(table->time_to_eat);
 
-		// pthread_mutex_lock(&philo->table->meal_mutex);
+		pthread_mutex_lock(&philo->table->meal_mutex);
         philo->nb_of_meals++;
-        // pthread_mutex_unlock(&philo->table->meal_mutex);
+        pthread_mutex_unlock(&philo->table->meal_mutex);
 		// LEAVE THE FORK
 		if (philo->id % 2 == 0)
 		{
@@ -199,9 +212,13 @@ void	*routine(void *arg)
 		ft_printf("%d ms: %d is sleeping\n", get_current_time() - table->start_time, philo->id);
 		pthread_mutex_unlock(&table->write_mutex);
 		ft_usleep(table->time_to_sleep);
+		pthread_mutex_lock(&philo->params->death_mutex);
+		death = philo->table->dead;
+		pthread_mutex_unlock(&philo->params->death_mutex);
 		// usleep(1000);
 	}
-	return (arg);
+	return (NULL);
+	// return (arg);
 }
 
 
