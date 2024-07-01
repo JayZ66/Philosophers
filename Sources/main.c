@@ -17,10 +17,10 @@ int	check_death(t_table *table)
 	pthread_mutex_lock(&table->death_mutex);
 	if (table->dead == 1)
 	{
-        pthread_mutex_unlock(&table->death_mutex);
-        return (1);
-    }
-    pthread_mutex_unlock(&table->death_mutex);
+		pthread_mutex_unlock(&table->death_mutex);
+		return (1);
+	}
+	pthread_mutex_unlock(&table->death_mutex);
 	return (0);
 }
 
@@ -35,34 +35,30 @@ void print_status(t_philosophers *philo, const char *status, const char *color) 
 
 void	*monitor(void *arg)
 {
-	// t_philosophers	*philo;
 	t_table			*table;
 	int				i;
+<<<<<<< Updated upstream
 
 	table = (t_table *)arg;
 	while (!table->dead)
+=======
+	int				death;
+	int				all_eaten;
+
+	table = (t_table *)arg;
+	death = 0;
+	while (!death)
+>>>>>>> Stashed changes
 	{
-		// if (check_death(table) == 1)
-		// {
-		// 	ft_usleep(table->time_to_die);
-		// 	pthread_mutex_lock(&table->write_mutex);
-		// 	ft_printf("%d ms: %d died\n", get_current_time() - table->start_time, table->philos[i].id);
-		// 	pthread_mutex_unlock(&table->write_mutex);
-		// 	return (NULL);
-		// }
 		i = 0;
+		all_eaten = 1;
 		while (i < table->nb_of_philos)
 		{
-			// pthread_mutex_lock(&table->write_mutex);
-			// printf("Start time : %d\n", table->start_time);
-			// printf("Current time : %ld\n", get_current_time());
-			// printf("Last eat time : %ld\n", philo->last_meal);
-			// printf("time : %ld\n", time);
-			// printf("Time - philo : %ld\n", time - philo->last_meal);
-			// pthread_mutex_unlock(&table->write_mutex);
 			pthread_mutex_lock(&table->death_mutex);
-			if ((get_current_time() - table->philos[i].last_meal) > table->time_to_die)
+			if ((get_current_time() - table->philos[i].last_meal)
+				> table->time_to_die)
 			{
+<<<<<<< Updated upstream
 				table->dead = 1;
 				pthread_mutex_unlock(&table->death_mutex);
 				pthread_mutex_lock(&table->write_mutex);
@@ -99,6 +95,47 @@ void	*monitor(void *arg)
 			// pthread_mutex_unlock(&table->meal_mutex);
 			i++;
 		}
+=======
+				ft_usleep(table->time_to_die);
+				pthread_mutex_lock(&table->write_mutex);
+				ft_printf("%d ms: %d died\n", get_current_time() - table->start_time, table->philos[i].id);
+				pthread_mutex_unlock(&table->write_mutex);
+				table->dead = 1;
+				pthread_mutex_unlock(&table->death_mutex);
+				return (NULL);
+			}
+			pthread_mutex_unlock(&table->death_mutex);
+			if (table->nb_of_times_philo_has_to_eat > 0)
+			{
+				pthread_mutex_lock(&table->meal_mutex);
+				if (table->philos[i].nb_of_meals
+					< table->nb_of_times_philo_has_to_eat)
+					all_eaten = 0;
+				pthread_mutex_unlock(&table->meal_mutex);
+			}
+			i++;
+		}
+		if (all_eaten && table->nb_of_times_philo_has_to_eat > 0)
+		{
+			pthread_mutex_lock(&table->write_mutex);
+			printf("All philosophers ate\n");
+			pthread_mutex_unlock(&table->write_mutex);
+			pthread_mutex_lock(&table->death_mutex);
+			table->dead = 1;
+			pthread_mutex_unlock(&table->death_mutex);
+			// i = 0;
+			// while (i < table->nb_of_philos)
+			// {
+			// 	printf("Philo %d ate : %d\n", table->philos[i].id,
+			// 		table->philos[i].nb_of_meals);
+			// 	i++;
+			// }
+			return (NULL);
+		}
+		pthread_mutex_lock(&table->death_mutex);
+		death = table->dead;
+		pthread_mutex_unlock(&table->death_mutex);
+>>>>>>> Stashed changes
 		usleep(1000);
 	}
 	return (arg);
@@ -112,7 +149,12 @@ void	*routine(void *arg)
 
 	philo = (t_philosophers *)arg;
 	table = philo->table;
+<<<<<<< Updated upstream
 	while (!table->dead)
+=======
+	death = philo->table->dead;
+	while (death == 0)
+>>>>>>> Stashed changes
 	{
 		// pthread_mutex_lock(&table->death_mutex);
 		// if (table->dead == 1)
@@ -124,57 +166,101 @@ void	*routine(void *arg)
 		// pthread_mutex_unlock(&table->death_mutex);
 		// THINKING
 		pthread_mutex_lock(&table->write_mutex);
-		ft_printf("%d ms: %d is thinking\n", get_current_time() - table->start_time, philo->id);
+		ft_printf("%d ms: %d is thinking\n", get_current_time()
+			- table->start_time, philo->id);
 		pthread_mutex_unlock(&table->write_mutex);
+		if (death == 1)
+			break ;
 		// TAKING LEFT FORK
 		if (philo->id % 2 == 0)
 		{
 			pthread_mutex_lock(philo->left_fork);
 			pthread_mutex_lock(&table->write_mutex);
-			ft_printf("%d ms: %d has taken a fork\n", get_current_time() - table->start_time, philo->id);
+			ft_printf("%d ms: %d has taken a fork\n", get_current_time()
+				- table->start_time, philo->id);
 			pthread_mutex_unlock(&table->write_mutex);
-			// if (check_death(table) == 1)
-			// {
-			// 	ft_usleep(table->time_to_die);
-			// 	pthread_mutex_unlock(philo->left_fork);
-			// 	break ;
-			// }
+			if (death == 1)
+			{
+				pthread_mutex_unlock(philo->left_fork);
+				break ;
+			}
 			pthread_mutex_lock(philo->right_fork);
 			pthread_mutex_lock(&table->write_mutex);
-			ft_printf("%d ms: %d has taken a fork\n", get_current_time() - table->start_time, philo->id);
+			ft_printf("%d ms: %d has taken a fork\n", get_current_time()
+				- table->start_time, philo->id);
 			pthread_mutex_unlock(&table->write_mutex);
 		}
-		else // Works without but longer !
+		else
 		{
+			if (death == 1)
+				break ;
 			pthread_mutex_lock(philo->right_fork);
 			pthread_mutex_lock(&table->write_mutex);
-			ft_printf("%d ms: %d has taken a fork\n", get_current_time() - table->start_time, philo->id);
+			ft_printf("%d ms: %d has taken a fork\n", get_current_time()
+				- table->start_time, philo->id);
 			pthread_mutex_unlock(&table->write_mutex);
+<<<<<<< Updated upstream
 			if (table->nb_of_philos == 1)
 			{
 				ft_usleep(table->time_to_die);
 				table->dead = 1;
 				pthread_mutex_unlock(philo->right_fork);
 				return (NULL);
+=======
+			if (philo->left_fork == philo->right_fork || death == 1)
+			{
+				pthread_mutex_lock(&table->death_mutex);
+				ft_printf("%d ms: %d died\n", get_current_time()
+					- table->start_time, philo->id);
+				philo->table->dead = 1;
+				pthread_mutex_unlock(&table->death_mutex);
+				pthread_mutex_unlock(philo->right_fork);
+				ft_usleep(table->time_to_die);
+				break ;
+>>>>>>> Stashed changes
 			}
 			pthread_mutex_lock(philo->left_fork);
 			pthread_mutex_lock(&table->write_mutex);
-			ft_printf("%d ms: %d has taken a fork\n", get_current_time() - table->start_time, philo->id);
+			ft_printf("%d ms: %d has taken a fork\n", get_current_time()
+				- table->start_time, philo->id);
 			pthread_mutex_unlock(&table->write_mutex);
 		}
+		pthread_mutex_lock(&table->death_mutex);
+		if (table->dead == 1)
+		{
+			pthread_mutex_unlock(&table->death_mutex);
+			if (philo->id % 2 == 0)
+			{
+				pthread_mutex_unlock(philo->right_fork);
+				pthread_mutex_unlock(philo->left_fork);
+			}
+			else
+			{
+				pthread_mutex_unlock(philo->left_fork);
+				pthread_mutex_unlock(philo->right_fork);
+			}
+			break ;
+		}
+		pthread_mutex_unlock(&table->death_mutex);
 		// EATING
 		pthread_mutex_lock(&table->death_mutex);
-		// philo->nb_of_meals++;
 		philo->last_meal = get_current_time();
 		pthread_mutex_lock(&table->write_mutex);
-		ft_printf("%d ms: %d is eating\n", get_current_time() - table->start_time, philo->id);
+		ft_printf("%d ms: %d is eating\n", get_current_time()
+			- table->start_time, philo->id);
 		pthread_mutex_unlock(&table->write_mutex);
 		pthread_mutex_unlock(&table->death_mutex);
 		ft_usleep(table->time_to_eat);
+<<<<<<< Updated upstream
 
 		// pthread_mutex_lock(&philo->table->meal_mutex);
         philo->nb_of_meals++;
         // pthread_mutex_unlock(&philo->table->meal_mutex);
+=======
+		pthread_mutex_lock(&philo->table->meal_mutex);
+		philo->nb_of_meals++;
+		pthread_mutex_unlock(&philo->table->meal_mutex);
+>>>>>>> Stashed changes
 		// LEAVE THE FORK
 		if (philo->id % 2 == 0)
 		{
@@ -186,24 +272,26 @@ void	*routine(void *arg)
 			pthread_mutex_unlock(philo->left_fork);
 			pthread_mutex_unlock(philo->right_fork);
 		}
-		// pthread_mutex_lock(&table->death_mutex);
-		// if (table->dead == 1)
-		// {
-		// 	ft_usleep(table->time_to_die);
-		// 	pthread_mutex_unlock(&table->death_mutex);
-		// 	break ;
-		// }
-		// pthread_mutex_unlock(&table->death_mutex);
+		if (death == 1)
+			break ;
 		// SLEEPING
 		pthread_mutex_lock(&table->write_mutex);
-		ft_printf("%d ms: %d is sleeping\n", get_current_time() - table->start_time, philo->id);
+		ft_printf("%d ms: %d is sleeping\n", get_current_time()
+			- table->start_time, philo->id);
 		pthread_mutex_unlock(&table->write_mutex);
 		ft_usleep(table->time_to_sleep);
+<<<<<<< Updated upstream
 		// usleep(1000);
 	}
 	return (arg);
+=======
+		pthread_mutex_lock(&philo->table->death_mutex);
+		death = philo->table->dead;
+		pthread_mutex_unlock(&philo->table->death_mutex);
+	}
+	return (NULL);
+>>>>>>> Stashed changes
 }
-
 
 void	initializing_table(int *args, t_table *table)
 {
@@ -222,17 +310,15 @@ void	initializing_table(int *args, t_table *table)
 	if (!table->philos)
 	{
 		write(1, "Memory error\n", 13);
-		// free(args);
-		// free(table->philos);
-		// free(table->forks);
-		exit(1);
+		return ;
 	}
 }
 
 // Initialisation des mutex
+// For forks need to make a loop : one philo = one_fork
+// Initialize other mutexes.
 void	initializing_mutexes(t_table *table)
 {
-	// For forks need to make a loop : one philo = one_fork
 	int	i;
 
 	i = 0;
@@ -240,16 +326,14 @@ void	initializing_mutexes(t_table *table)
 	if (!table->forks)
 	{
 		write(1, "Memory error\n", 13);
-		// free(args);
 		free(table->philos);
-		exit(1);
+		return ;
 	}
 	while (i < table->nb_of_philos)
 	{
 		pthread_mutex_init(&table->forks[i], NULL);
 		i++;
 	}
-	// Initialize other mutexes.
 	pthread_mutex_init(&table->meal_mutex, NULL);
 	pthread_mutex_init(&table->write_mutex, NULL);
 	pthread_mutex_init(&table->death_mutex, NULL);
@@ -267,9 +351,9 @@ void	initializing_philos(t_table *table)
 		table->philos[i].nb_of_meals = 0;
 		table->philos[i].table = table;
 		table->philos[i].left_fork = &table->forks[i];
-		table->philos[i].right_fork = &table->forks[(i + 1) % table->nb_of_philos];
+		table->philos[i].right_fork = &table->forks[(i + 1)
+			% table->nb_of_philos];
 		table->philos[i].last_meal = get_current_time();
-		// pthread_mutex_init(&table->philos[i].meal_mutex, NULL);
 		i++;
 	}
 }
@@ -290,31 +374,24 @@ void	destroy_mutexes(t_table *table)
 	pthread_mutex_destroy(&table->death_mutex);
 }
 
+// Initializing
+// Creating threads
+// Destroying threads & mutexes
 int	main(int argc, char **argv)
 {
 	int		*args;
 	t_table	table;
-	// pthread_t	monitor_thread;
 
-	// table = malloc(sizeof(t_table));
 	if (manage_errors(argc, argv) == 1)
 		return (1);
 	else
-		args = convert_to_digit(argv); // Convert args. into integer.
-	if (check_philo_data(args) == 1) // Do i keep argv var. ?
+		args = convert_to_digit(argv);
+	if (check_philo_data(args) == 1)
 		return (1);
-	// Initializing
 	initializing_table(args, &table);
 	initializing_mutexes(&table);
 	initializing_philos(&table);
-	// Creating threads.
 	create_philos_threads(&table);
-	// if (pthread_create(&monitor_thread, NULL, &monitor, &table) != 0)
-	// {
-	// 	write(1, "Pb while creating threads\n", 26);
-	// 	return (1);
-	// }
-	// pthread_join(monitor_thread, NULL);
 	join_philo_threads(&table);
 	free(args);
 	free(table.philos);

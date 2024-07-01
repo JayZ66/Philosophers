@@ -87,4 +87,3 @@ int	ft_putstr(char *str)
 	}
 	return (i);
 }
-

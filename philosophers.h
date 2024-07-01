@@ -26,14 +26,7 @@
 # include <signal.h>
 # include <pthread.h>
 
-#define COLOR_RESET    "\x1b[0m"
-#define COLOR_THINKING "\x1b[34m"
-#define COLOR_FORK     "\x1b[33m"
-#define COLOR_EATING   "\x1b[32m"
-#define COLOR_SLEEPING "\x1b[36m"
-#define COLOR_DEAD     "\x1b[31m"
-
-struct s_table;
+struct	s_table;
 
 typedef struct s_philosophers
 {
@@ -43,16 +36,16 @@ typedef struct s_philosophers
 	pthread_t		thread;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	struct s_table *table;
-} t_philosophers;
+	struct s_table	*table;
+}	t_philosophers;
 
 typedef struct s_table
 {
 	int				nb_of_philos;
-	int		time_to_die;
-	int		time_to_eat;
-	int		time_to_sleep;
-	int		start_time;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				start_time;
 	int				nb_of_times_philo_has_to_eat;
 	int				dead;
 	int				all_eaten;
@@ -60,30 +53,28 @@ typedef struct s_table
 	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t	death_mutex;
 	pthread_mutex_t	write_mutex;
-	t_philosophers *philos;
-} t_table;
-
+	t_philosophers	*philos;
+}	t_table;
 
 // UTILS
-int	ft_isdigit(int c);
-int	ft_strlen_tab(char **cmd_line);
-int	is_a_digit(char **argv);
-int	ft_atoi(const char *nptr);
+int		ft_isdigit(int c);
+int		ft_strlen_tab(char **cmd_line);
+int		is_a_digit(char **argv);
+int		ft_atoi(const char *nptr);
 
 // MANAGING ARGS
-int	manage_errors(int argc, char **argv);
-int	*convert_to_digit(char **argv);
-int	check_philo_data(int *args);
+int		manage_errors(int argc, char **argv);
+int		*convert_to_digit(char **argv);
+int		check_philo_data(int *args);
 
 // MANAGING TIME
-long get_current_time();
-void    ft_usleep(long int sleep_in_ms);
+long	get_current_time(void);
+void	ft_usleep(int sleep_in_ms);
 
 // INITIALIZATION OF STRUCTURES
 void	initializing_table(int *args, t_table *table);
 void	initializing_mutexes(t_table *table);
 void	initializing_philos(t_table *table);
-
 
 // MANAGING THREADS
 void	create_philos_threads(t_table *table);

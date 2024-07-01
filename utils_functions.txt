@@ -8,3 +8,83 @@ interfere with Philosopher’s timings.
 - ft_usleep (use usleep inside)
 - get_current_time
 Gets the current time in milliseconds
+
+
+
+// void	*monitor(void *arg)
+// {
+// 	// t_philosophers	*philo;
+// 	t_table			*table;
+// 	int				i;
+// 	// int				death;
+
+// 	table = (t_table *)arg;
+// 	// death = table->dead;
+// 	while (1)
+// 	{
+// 		// if (check_death(table) == 1)
+// 		// {
+// 		// 	ft_usleep(table->time_to_die);
+// 		// 	pthread_mutex_lock(&table->write_mutex);
+// 		// 	ft_printf("%d ms: %d died\n", get_current_time() - table->start_time, table->philos[i].id);
+// 		// 	pthread_mutex_unlock(&table->write_mutex);
+// 		// 	return (NULL);
+// 		// }
+// 		i = 0;
+// 		while (i < table->nb_of_philos)
+// 		{
+// 			pthread_mutex_lock(&table->death_mutex);
+// 			if ((get_current_time() - table->philos[i].last_meal) > table->time_to_die)
+// 			{
+// 				pthread_mutex_lock(&table->write_mutex);
+// 				ft_printf("%d ms: %d died\n", get_current_time() - table->start_time, table->philos[i].id);
+// 				pthread_mutex_unlock(&table->write_mutex);
+// 				table->dead = 1;
+// 				pthread_mutex_unlock(&table->death_mutex);
+// 			}
+// 			pthread_mutex_unlock(&table->death_mutex);
+// 			// pthread_mutex_unlock(&table->death_mutex);
+// 			// if (table->dead == 1)
+// 			// {
+// 			// 	// ft_usleep(table->time_to_die);
+// 			// 	break ;
+// 			// }
+// 			if (table->nb_of_times_philo_has_to_eat > 0)
+// 			{
+// 				pthread_mutex_lock(&table->meal_mutex);
+// 				if (table->philos[i].nb_of_meals >= table->nb_of_times_philo_has_to_eat)
+// 				{
+// 					table->all_eaten++;
+// 				}
+// 				pthread_mutex_unlock(&table->meal_mutex);
+// 			}
+// 			// printf("Nb times to eat : %d\n", table->nb_of_times_philo_has_to_eat);
+// 			// printf("Nb of meals : %d of %d\n", table->philos[i].nb_of_meals, table->philos[i].id);
+// 			i++;
+// 		}
+// 		if (table->nb_of_times_philo_has_to_eat > 0 && table->all_eaten >= table->nb_of_philos)
+// 		{
+// 			pthread_mutex_lock(&table->write_mutex);
+// 			// printf("All eaten : %d\n", table->all_eaten);
+// 			printf("All philosophers ate\n");
+// 			// pthread_mutex_unlock(&table->meal_mutex);
+// 			pthread_mutex_lock(&table->death_mutex);
+// 			table->dead = 1;
+// 			pthread_mutex_unlock(&table->death_mutex);
+// 			pthread_mutex_unlock(&table->write_mutex);
+// 			// i = 0;
+// 			// while (i < table->nb_of_philos)
+// 			// {
+// 			// 	printf("Philo %d ate : %d\n", table->philos[i].id, table->philos[i].nb_of_meals);
+// 			// 	i++;
+// 			// }
+// 			break ;
+// 		}
+// 		// pthread_mutex_unlock(&table->meal_mutex);
+// 		// pthread_mutex_lock(&table->death_mutex);
+// 		// death = table->dead;
+// 		// pthread_mutex_unlock(&table->death_mutex);
+// 		usleep(1000);
+// 	}
+// 	return (NULL);
+// }

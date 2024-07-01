@@ -16,16 +16,8 @@
 
 // Check if it's an integer ! => DONE
 // Limit to 200 philos max. => DONE
-// Each nb should be bigger than 0 (except the nb of meals for each philo). => DONE
+// Each nb should be bigger than 0 (except the nb of meals for each philo).
 // Convert arguments into integer ! => DONE
-
-/*
-- 1 — The number of philosophers
-- 2 — The time a philosopher will die if he doesn’t eat
-- 3 — The time it takes a philosopher to eat
-- 4 — The time it takes a philosopher to sleep
-- 5 — Number of times all the philosophers need to eat before terminating the program (OPTIONAL)
-*/
 
 int	is_a_digit(char **argv)
 {
@@ -35,18 +27,18 @@ int	is_a_digit(char **argv)
 	i = 1;
 	while (argv[i])
 	{
-		if (argv[i] ==  NULL)
+		if (argv[i] == NULL)
 			return (1);
 		j = 0;
 		while (argv[i][j])
 		{
 			if (argv[i][0] == '-' || argv[i][0] == '+')
 				j++;
-			if (ft_isdigit(argv[i][j]) == 1) // Check si suffit pour un signe + rien derrière ou pas digit.
+			if (ft_isdigit(argv[i][j]) == 1)
 				return (1);
 			j++;
 		}
-		i++;	
+		i++;
 	}
 	return (0);
 }
