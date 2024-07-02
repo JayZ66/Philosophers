@@ -45,7 +45,7 @@ typedef struct s_table
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
-	int				start_time;
+	long int		start_time;
 	int				nb_of_times_philo_has_to_eat;
 	int				dead;
 	int				all_eaten;
@@ -53,6 +53,7 @@ typedef struct s_table
 	pthread_mutex_t	meal_mutex;
 	pthread_mutex_t	death_mutex;
 	pthread_mutex_t	write_mutex;
+	pthread_mutex_t	stop_mutex;
 	t_philosophers	*philos;
 }	t_table;
 
@@ -82,6 +83,8 @@ void	join_philo_threads(t_table *table);
 void	*routine(void *arg);
 void	*monitor(void *arg);
 
+void	destroy_mutexes(t_table *table);
+
 // PRINTF
 int		count_nb(int n, int base);
 int		count_unsigned_nb(unsigned int n, int base);
@@ -94,5 +97,8 @@ int		ft_unsigned_putnbr(unsigned int nb);
 int		ft_putnb(int nb);
 int		ft_putnb_hexa(unsigned int nb, char *base);
 int		ft_putnb_hexa_add(void *ptr, char *base);
+
+
+
 
 #endif

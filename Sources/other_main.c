@@ -6,11 +6,30 @@
 /*   By: jeguerin <jeguerin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:30:59 by jeguerin          #+#    #+#             */
-/*   Updated: 2024/07/01 18:58:46 by jeguerin         ###   ########.fr       */
+/*   Updated: 2024/07/02 17:00:43 by jeguerin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philosophers.h"
+
+long	get_current_time(void)
+{
+	struct timeval time;
+
+	gettimeofday(&time, NULL);
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+}
+
+// void	ft_usleep(long mill)
+// {
+// 	long	start;
+
+// 	start = get_current_time();
+// 	while (get_current_time() - start < mill)
+// 	{
+// 		usleep(10);
+// 	}
+// }
 
 int	check_philo_data2(char *argv[])
 {
@@ -78,6 +97,7 @@ void	*monitor2(void *args)
 	while (death == 0)
 	{
 		i = 0;
+		all_eaten = 1;
 		while (i < table->nb_of_philos)
 		{
 			pthread_mutex_lock(&table->death_mutex);
@@ -91,11 +111,32 @@ void	*monitor2(void *args)
 				pthread_mutex_unlock(&table->death_mutex);
 				return (NULL);
 			}
-			pthread_mutec_unlock(&table->death_mutex);
+			pthread_mutex_unlock(&table->death_mutex);
 			if (table->nb_of_times_philo_has_to_eat > 0)
+			{
+				pthread_mutex_lock(&table->death_mutex);
+				if (table->philos[i].nb_of_meals < table->nb_of_times_philo_has_to_eat)
+					all_eaten = 0;
+				pthread_mutex_unlock(&table->death_mutex);
+			}
 			i++;
 		}
+		if (all_eaten && table->nb_of_times_philo_has_to_eat > 0)
+		{
+			pthread_mutex_lock(&table->write_mutex);
+			printf("Philosophers ate the minimun of meals\n");
+			pthread_mutex_unlock(&table->write_mutex);
+			pthread_mutex_lock(&table->death_mutex);
+			table->dead = 1;
+			pthread_mutex_unlock(&table->death_mutex);
+			return (NULL);
+		}
+		pthread_mutex_lock(&table->death_mutex);
+		death = table->dead;
+		pthread_mutex_unlock(&table->death_mutex);
+		ft_usleep(1000);
 	}
+	return (NULL);
 }
 
 void	initialize_philo(t_table *table)
@@ -121,29 +162,24 @@ void	initialize_philo(t_table *table)
 void	*routine2(void *args)
 {
 	t_philosophers	*philo = (t_philosophers *)args;
-	int	dead;
+	int	death;
 	
-	dead = philo->table->dead;
-	while (dead == 0)
+	death = philo->table->dead;
+	while (death == 0)
 	{
 		pthread_mutex_lock(&philo->table->write_mutex);
 		printf("%ld ms: %d is thinking\n", get_current_time() - philo->table->start_time, philo->id);
 		pthread_mutex_unlock(&philo->table->write_mutex);
-
+		if (death == 1)
+			break ;
 		if (philo->id % 2 == 0)
 		{
 			pthread_mutex_lock(philo->left_fork);
 			pthread_mutex_lock(&philo->table->write_mutex);
 			printf("%ld ms: %d has taken a fork\n", get_current_time() - philo->table->start_time, philo->id);
 			pthread_mutex_unlock(&philo->table->write_mutex);
-			if (philo->left_fork == philo->right_fork)
+			if (death == 1)
 			{
-				pthread_mutex_lock(&philo->table->write_mutex);
-				printf("%ld ms: %d died\n", get_current_time() - philo->table->start_time, philo->id);
-				pthread_mutex_unlock(&philo->table->write_mutex);
-				pthread_mutex_lock(&philo->table->death_mutex);
-				philo->table->dead = 1;
-				pthread_mutex_unlock(&philo->table->death_mutex);
 				pthread_mutex_unlock(philo->left_fork);
 				break ;
 			}
@@ -154,10 +190,24 @@ void	*routine2(void *args)
 		}
 		else
 		{
+			if (death == 1)
+				break ;
 			pthread_mutex_lock(philo->right_fork);
 			pthread_mutex_lock(&philo->table->write_mutex);
 			printf("%ld ms: %d has taken a fork\n", get_current_time() - philo->table->start_time, philo->id);
 			pthread_mutex_unlock(&philo->table->write_mutex);
+			if (philo->table->nb_of_philos == 1)
+			{
+				// ft_usleep(philo->table->time_to_die);
+				pthread_mutex_lock(&philo->table->write_mutex);
+				printf("%ld ms: %d died\n", get_current_time() - philo->table->start_time, philo->id);
+				pthread_mutex_unlock(&philo->table->write_mutex);
+				pthread_mutex_lock(&philo->table->death_mutex);
+				philo->table->dead = 1;
+				pthread_mutex_unlock(&philo->table->death_mutex);
+				pthread_mutex_unlock(philo->right_fork);
+				break ;
+			}
 			pthread_mutex_lock(philo->left_fork);
 			pthread_mutex_lock(&philo->table->write_mutex);
 			printf("%ld ms: %d has taken a fork\n", get_current_time() - philo->table->start_time, philo->id);
@@ -191,15 +241,15 @@ void	*routine2(void *args)
 		pthread_mutex_unlock(&philo->table->write_mutex);
 		ft_usleep(philo->table->time_to_sleep);
 		pthread_mutex_lock(&philo->table->death_mutex);
-		dead = philo->table->dead;
-		pthread_mutex_unlock(&philo->table->death_mutex)
+		death = philo->table->dead;
+		pthread_mutex_unlock(&philo->table->death_mutex);
 	}
 	return (NULL);
 }
 
 void	create_threads(t_table *table)
 {
-	// pthread_t	monitor_thread;
+	pthread_t	monitor_thread;
 	int	i;
 
 	i = 0;
@@ -212,12 +262,12 @@ void	create_threads(t_table *table)
 		}
 		i++;
 	}
-	// if (pthread_create(&monitor_thread, NULL, monitor, &table) != 0)
-	// {
-	// 	printf("Failed creation of monitor thread\n");
-	// 	return ;
-	// }
-	// pthread_join(monitor_thread, NULL);
+	if (pthread_create(&monitor_thread, NULL, monitor2, table) != 0)
+	{
+		printf("Failed creation of monitor thread\n");
+		return ;
+	}
+	pthread_join(monitor_thread, NULL);
 }
 
 void	join_threads(t_table *table)
@@ -232,23 +282,23 @@ void	join_threads(t_table *table)
 	}
 }
 
-int	main(int argc, char *argv[])
-{
-	t_table	table;
+// int	main(int argc, char *argv[])
+// {
+// 	t_table	table;
 
-	// Gestion args.
-	if (manage_errors(argc, argv) == 1 || check_philo_data2(argv) == 1)
-		return (1);
-	// Initializing structures
-	// Initializing mutexes
-	initialize_table(&table, argv);
-	initialize_mutex(&table);
-	initialize_philo(&table);
-	// Creating Threads + routine
-	create_threads(&table);
-	// Destroying threads
-	join_threads(&table);
-	// Destroying mutexes
-
-	// Free everything
-}
+// 	// Gestion args.
+// 	if (manage_errors(argc, argv) == 1 || check_philo_data2(argv) == 1)
+// 		return (1);
+// 	// Initializing structures
+// 	// Initializing mutexes
+// 	initialize_table(&table, argv);
+// 	initialize_mutex(&table);
+// 	initialize_philo(&table);
+// 	// Creating Threads + routine
+// 	create_threads(&table);
+// 	// Destroying threads
+// 	join_threads(&table);
+// 	// Destroying mutexes
+// 	destroy_mutexes(&table);
+// 	// Free everything
+// }
