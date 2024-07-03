@@ -82,21 +82,19 @@ int	*convert_to_digit(char **argv)
 	return (args);
 }
 
-//argv[0] => Max. 200 philosophers.
-// Everything need to be higher than 0 (except optional part).
-int	check_philo_data(int *args)
+int	check_philo_data(char **argv)
 {
 	size_t	i;
 
-	if (args[0] > 200)
+	if (ft_atoi(argv[1]) > 200)
 	{
 		printf("The nb of philosophers can't be higher than 200\n");
 		return (1);
 	}
 	i = 1;
-	while (args[i])
+	while (argv[i])
 	{
-		if (args[i] < 0)
+		if (ft_atoi(argv[i]) < 0)
 		{
 			printf("The time can't be less than 0\n");
 			return (1);

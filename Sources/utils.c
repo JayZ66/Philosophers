@@ -56,3 +56,15 @@ int	ft_atoi(const char *nptr)
 	}
 	return (result * sign);
 }
+
+int	check_death(t_table *table)
+{
+	pthread_mutex_lock(&table->death_mutex);
+	if (table->dead == 1)
+	{
+		pthread_mutex_unlock(&table->death_mutex);
+		return (1);
+	}
+	pthread_mutex_unlock(&table->death_mutex);
+	return (0);
+}

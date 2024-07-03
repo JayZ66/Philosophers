@@ -28,6 +28,15 @@
 
 struct	s_table;
 
+typedef enum e_type
+{
+	THINKING,
+	TAKING_FORK,
+	EATING,
+	SLEEPING,
+	DEAD
+}	t_type;
+
 typedef struct s_philosophers
 {
 	int				id;
@@ -63,17 +72,19 @@ int		ft_strlen_tab(char **cmd_line);
 int		is_a_digit(char **argv);
 int		ft_atoi(const char *nptr);
 
+// MANAGING TIME
+long	get_time(void);
+void	ft_usleep(int sleep_in_ms);
+
+
 // MANAGING ARGS
 int		manage_errors(int argc, char **argv);
 int		*convert_to_digit(char **argv);
-int		check_philo_data(int *args);
-
-// MANAGING TIME
-long	get_current_time(void);
-void	ft_usleep(int sleep_in_ms);
+int		check_philo_data(char *argv[]);
 
 // INITIALIZATION OF STRUCTURES
 void	initializing_table(int *args, t_table *table);
+void	initialize_table(t_table *table, char *argv[]);
 void	initializing_mutexes(t_table *table);
 void	initializing_philos(t_table *table);
 
@@ -84,6 +95,9 @@ void	*routine(void *arg);
 void	*monitor(void *arg);
 
 void	destroy_mutexes(t_table *table);
+int	check_death(t_table *table);
+
+int	print_state(t_table *table, int p_id, t_type state);
 
 // PRINTF
 int		count_nb(int n, int base);

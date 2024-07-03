@@ -6,7 +6,7 @@
 #    By: jeguerin <jeguerin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 18:59:35 by jeza              #+#    #+#              #
-#    Updated: 2024/07/02 10:56:21 by jeguerin         ###   ########.fr        #
+#    Updated: 2024/07/03 11:49:20 by jeguerin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,9 +21,9 @@ CFLAGS := -Wall -Wextra -Werror -Iheaders/ -pthread -g
 
 #Liste des fichiers source.
 SRCS = Sources/main.c Sources/utils.c Sources/manage_args.c \
-		Sources/manage_threads.c Sources/count_nb.c \
-		Sources/ft_printf.c Sources/ft_putnb.c Sources/manage_time.c \
-		Sources/other_main.c \
+		Sources/manage_threads.c Sources/manage_time.c Sources/routine.c \
+		Sources/monitor.c Sources/initialize_structures.c \
+		Sources/manage_mutexes.c \
 
 OBJS = $(SRCS:.c=.o)
 
@@ -37,9 +37,6 @@ author:
 
 $(LIBFT):
 	make -C Libft
-
-$(PRINTF):
-	make -C ft_printf
 
 # Regle pour creer l'executable en liant les objets.
 # $(NAME): $(OBJS) $(LIBFT) $(PRINTF) $(GETNEXTLINE_OBJ)

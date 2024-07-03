@@ -6,19 +6,19 @@
 /*   By: jeguerin <jeguerin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 11:30:59 by jeguerin          #+#    #+#             */
-/*   Updated: 2024/07/02 17:00:43 by jeguerin         ###   ########.fr       */
+/*   Updated: 2024/07/03 14:26:04 by jeguerin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philosophers.h"
 
-long	get_current_time(void)
-{
-	struct timeval time;
+// long	get_current_time(void)
+// {
+// 	struct timeval time;
 
-	gettimeofday(&time, NULL);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
-}
+// 	gettimeofday(&time, NULL);
+// 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+// }
 
 // void	ft_usleep(long mill)
 // {
@@ -31,42 +31,48 @@ long	get_current_time(void)
 // 	}
 // }
 
-int	check_philo_data2(char *argv[])
-{
-	size_t	i;
+// int	check_philo_data2(char *argv[])
+// {
+// 	size_t	i;
 
-	if (ft_atoi(argv[1]) > 200)
-	{
-		printf("The nb of philosophers can't be higher than 200\n");
-		return (1);
-	}
-	i = 1;
-	while (argv[i])
-	{
-		if (ft_atoi(argv[i]) < 0)
-		{
-			printf("The time can't be less than 0\n");
-			return (1);
-		}
-		i++;
-	}
-	return (0);
-}
+// 	if (ft_atoi(argv[1]) > 200)
+// 	{
+// 		printf("The nb of philosophers can't be higher than 200\n");
+// 		return (1);
+// 	}
+// 	i = 1;
+// 	while (argv[i])
+// 	{
+// 		if (ft_atoi(argv[i]) < 0)
+// 		{
+// 			printf("The time can't be less than 0\n");
+// 			return (1);
+// 		}
+// 		i++;int	check_philo_data2(char *argv[])
+// {
+// 	size_t	i;
 
-void	initialize_table(t_table *table, char *argv[])
-{
-	table->nb_of_philos = ft_atoi(argv[1]);
-	table->time_to_die = ft_atoi(argv[2]);
-	table->time_to_eat = ft_atoi(argv[3]);
-	table->time_to_sleep = ft_atoi(argv[4]);
-	if (argv[5])
-		table->nb_of_times_philo_has_to_eat = ft_atoi(argv[5]);
-	else
-		table->nb_of_times_philo_has_to_eat = -1;
-	table->all_eaten = 0;
-	table->dead = 0;
-	table->start_time = get_current_time();
-}
+// 	if (ft_atoi(argv[1]) > 200)
+// 	{
+// 		printf("The nb of philosophers can't be higher than 200\n");
+// 		return (1);
+// 	}
+// 	i = 1;
+// 	while (argv[i])
+// 	{
+// 		if (ft_atoi(argv[i]) < 0)
+// 		{
+// 			printf("The time can't be less than 0\n");
+// 			return (1);
+// 		}
+// 		i++;
+// 	}
+// 	return (0);
+// }
+
+// 	}
+// 	return (0);
+// }
 
 void	initialize_mutex(t_table *table)
 {
